@@ -32,7 +32,7 @@ public class MovimentacaoEntity implements BaseEntity<Long> {
 	@Column(nullable = false)
 	private Integer quantidade;
 	
-	@Column(nullable = false)
+	@Column
 	private BigDecimal precoUnitario;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
