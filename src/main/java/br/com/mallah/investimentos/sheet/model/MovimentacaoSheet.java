@@ -1,7 +1,7 @@
 package br.com.mallah.investimentos.sheet.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import br.com.mallah.investimentos.sheet.annotation.Column;
 import br.com.mallah.investimentos.sheet.annotation.Sheet;
@@ -13,7 +13,7 @@ public class MovimentacaoSheet implements SheetModel {
 	private String entradaSaida;
 	
 	@Column(name = "Data")
-	private LocalDateTime data;
+	private LocalDate data;
 	
 	@Column(name = "Movimentação")
 	private String movimentacao;
@@ -37,7 +37,7 @@ public class MovimentacaoSheet implements SheetModel {
 		return entradaSaida;
 	}
 
-	public LocalDateTime getData() {
+	public LocalDate getData() {
 		return data;
 	}
 

@@ -29,7 +29,7 @@ public class ProcessImportMovimentacaoService implements ProcessImportDataServic
 			.map(s -> new MovimentacaoMapper().map(s))
 			.collect(Collectors.toList());
 		
-		insertMovimentacaoService.
+		insertMovimentacaoService.process(entities);
 	}
 
 	@Override

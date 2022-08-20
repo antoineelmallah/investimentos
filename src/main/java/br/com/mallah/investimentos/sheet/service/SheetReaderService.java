@@ -38,9 +38,6 @@ public class SheetReaderService {
 
 		List<T> result = new ArrayList<>();
 		
-		T entitySheet = ReflectionUtils.getNewInstance(sheetAnnotatedClass)
-				.orElseThrow(() -> new IllegalStateException("Error trying to instantiate class '"+sheetAnnotatedClass.getName()+"'"));
-		
 		Row header = sheet.getRow(sheet.getFirstRowNum());
 		
 		List<Field> mappedFields = extractFieldsFromHeader(sheetAnnotatedClass, header);
@@ -48,11 +45,14 @@ public class SheetReaderService {
 		for (Row row: sheet) {
 
 			if (row.getRowNum() == sheet.getTopRow()) continue;
+
+			T entitySheet = ReflectionUtils.getNewInstance(sheetAnnotatedClass)
+					.orElseThrow(() -> new IllegalStateException("Error trying to instantiate class '"+sheetAnnotatedClass.getName()+"'"));
 			
 			Iterator<Field> fieldIterator = mappedFields.iterator();
 
 			for (Cell cell: row) {
-				//System.out.println(cell.getStringCellValue());
+				
 				if (!fieldIterator.hasNext()) {
 					throw new IllegalStateException("Number of values bigger than number of sheet columns mapped on class '"+sheetAnnotatedClass.getName()+"'");
 				}
@@ -62,7 +62,9 @@ public class SheetReaderService {
 				
 				ReflectionUtils.setValue(field, entitySheet, converter.convert(cell));
 			}
+
 			result.add(entitySheet);
+			
 		}
 		
 		logger.debug("Sheet '"+sheet.getSheetName()+"' processed!");
