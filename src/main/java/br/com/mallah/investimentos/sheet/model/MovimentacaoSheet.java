@@ -3,11 +3,19 @@ package br.com.mallah.investimentos.sheet.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import org.apache.logging.log4j.util.Strings;
+
+import br.com.mallah.investimentos.mapper.MapSheetToEntity;
+import br.com.mallah.investimentos.persistence.entity.FluxoMovimento;
+import br.com.mallah.investimentos.persistence.entity.InstituicaoEntity;
+import br.com.mallah.investimentos.persistence.entity.MovimentacaoEntity;
+import br.com.mallah.investimentos.persistence.entity.ProdutoEntity;
+import br.com.mallah.investimentos.persistence.entity.TipoMovimentacaoEntity;
 import br.com.mallah.investimentos.sheet.annotation.Column;
 import br.com.mallah.investimentos.sheet.annotation.Sheet;
 
 @Sheet(name = "Movimentação", fileNamePattern = "^movimentacao-\\d{4}(-\\d{2}){5}\\.xlsx$")
-public class MovimentacaoSheet implements SheetModel {
+public class MovimentacaoSheet implements MapSheetToEntity<MovimentacaoEntity> {
 
 	@Column(name = "Entrada/Saída")
 	private String entradaSaida;
@@ -70,6 +78,18 @@ public class MovimentacaoSheet implements SheetModel {
 		return "Movimentacao [entradaSaida=" + entradaSaida + ", data=" + data + ", movimentacao=" + movimentacao
 				+ ", produto=" + produto + ", instituicao=" + instituicao + ", quantidade=" + quantidade
 				+ ", precoUnitario=" + precoUnitario + ", valorOperacao=" + valorOperacao + "]";
+	}
+	
+	@Override
+	public MovimentacaoEntity toEntity() {
+		return MovimentacaoEntity.newInstance(
+				FluxoMovimento.getBySheetValue(this.getEntradaSaida()).orElse(null), 
+				this.getData(), 
+				this.getQuantidade() == null ? null : this.getQuantidade().intValue(), 
+				this.getPrecoUnitario(), 
+				Strings.isBlank(this.getMovimentacao()) ? null : TipoMovimentacaoEntity.newInstance(this.getMovimentacao()), 
+				ProdutoEntity.newInstance(this.getProduto()), 
+				InstituicaoEntity.newInstance(this.getInstituicao()));
 	}
 	
 }

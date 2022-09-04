@@ -17,7 +17,7 @@ import br.com.mallah.investimentos.persistence.entity.TipoMovimentacaoEntity;
 import br.com.mallah.investimentos.persistence.repository.MovimentacaoRepository;
 
 @Service
-public class InsertMovimentacaoService {
+public class MovimentacaoPersistService implements PersistService<MovimentacaoEntity> {
 	
 	@Autowired
 	private TipoMovimentacaoService tipoMovimentacaoService;
@@ -32,7 +32,8 @@ public class InsertMovimentacaoService {
 	private MovimentacaoRepository movimentacaoRepository;
 	
 	@Transactional
-	public void process(List<MovimentacaoEntity> entities) {
+	@Override
+	public List<MovimentacaoEntity> process(List<MovimentacaoEntity> entities) {
 		
 		excluirMovimentacoesExistentes(entities);
 
@@ -57,10 +58,15 @@ public class InsertMovimentacaoService {
 			setInstituicaoPersistida(instituicoes, m);
 		});
 
-		movimentacaoRepository.saveAll(entities);
+		return movimentacaoRepository.saveAll(entities);
 		
 	}
 
+	@Override
+	public Class<MovimentacaoEntity> getEntityClass() {
+		return MovimentacaoEntity.class;
+	}
+	
 	private void excluirMovimentacoesExistentes(List<MovimentacaoEntity> entities) {
 		Optional<LocalDate> dataInicioOptional = entities.stream().map(MovimentacaoEntity::getData).min((di, df) -> di.compareTo(df));
 		Optional<LocalDate> dataFimOptional = entities.stream().map(MovimentacaoEntity::getData).max((di, df) -> di.compareTo(df));
